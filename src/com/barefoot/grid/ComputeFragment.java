@@ -1,6 +1,7 @@
 package com.barefoot.grid;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ComputeFragment extends Fragment {
 
@@ -45,8 +49,47 @@ public class ComputeFragment extends Fragment {
         super.onPageFinished(view, url);
         initiateJsCallback();
       }
+
+      @Override
+      public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        return super.shouldOverrideUrlLoading(view, url);
+      }
+
     });
-    hiddenWebView.loadUrl("file:///android_asset/grid/base.html");
+//    hiddenWebView.loadUrl("file:///android_asset/grid/base.html");
+//    hiddenWebView.loadUrl("file://"+getActivity().getExternalFilesDir(null)+"/base.html");
+
+    String path = "file://"+getActivity().getExternalFilesDir(null) + "/base.html";
+    StringBuffer fileContent = new StringBuffer();
+    String line;
+    AssetManager assets = getActivity().getAssets();
+    InputStream inputStream = null;
+    try {
+      inputStream = assets.open("grid/base.html");
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+    DataInputStream dataInputStream = new DataInputStream(inputStream);
+    try {
+      while((line = dataInputStream.readLine()) != null)
+        fileContent.append(line);
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage());
+    }
+    finally {
+      try {
+        inputStream.close();
+      } catch (IOException e) {
+        Log.e(TAG, e.getMessage());
+      }
+
+      try {
+        dataInputStream.close();
+      } catch (IOException e) {
+        Log.e(TAG, e.getMessage());
+      }
+    }
+    hiddenWebView.loadDataWithBaseURL(path, fileContent.toString(), "text/html","UTF-8",null);
   }
 
   private void initiateJsCallback() {
