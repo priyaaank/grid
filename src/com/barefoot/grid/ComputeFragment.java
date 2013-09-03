@@ -3,17 +3,21 @@ package com.barefoot.grid;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ComputeFragment extends Fragment {
 
   public static final int WEB_VIEW_ID = 625;
   public static final String COMPUTE_INTERFACE = "gridInterface";
+  private static final String TAG = ComputeFragment.class.getCanonicalName();
   private WebView hiddenWebView;
   private ComputeFragment.JavascriptInterface javascriptInterface;
 
@@ -57,8 +61,18 @@ public class ComputeFragment extends Fragment {
       this.applicationContext = applicationContext;
     }
 
+    public void log(String msg) {
+      Log.d(TAG, msg);
+    }
+
     public void computedData(String jsonData) {
-      ((GridActivity)getActivity()).showSuccessToast();
+      String output = null;
+      try {
+        output = new JSONObject(jsonData).get("output").toString();
+      } catch (JSONException e) {
+        Log.e(TAG, e.getMessage());
+      }
+      ((GridActivity) getActivity()).showSuccessToast(output);
     }
 
   }

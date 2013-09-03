@@ -14,7 +14,7 @@ public class GridActivity extends FragmentActivity {
     getSupportFragmentManager().beginTransaction().add(new ComputeFragment(), "computeFragment").commit();
   }
 
-  public void showSuccessToast() {
-    Toast.makeText(this, "Function was executed as you'd want", Toast.LENGTH_LONG).show();
+  public void showSuccessToast(String data) {
+    Toast.makeText(this, "Password is " + data, Toast.LENGTH_LONG).show();
   }
 }
