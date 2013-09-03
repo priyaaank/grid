@@ -3,11 +3,11 @@ package com.barefoot.grid;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 public class ComputeFragment extends Fragment {
@@ -20,12 +20,6 @@ public class ComputeFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    hiddenWebView = new WebView(this.getActivity().getApplicationContext());
-    hiddenWebView.setId(WEB_VIEW_ID);
-    javascriptInterface = new JavascriptInterface(this.getActivity().getApplicationContext());
-    hiddenWebView.addJavascriptInterface(javascriptInterface, COMPUTE_INTERFACE);
-    hiddenWebView.getSettings().setJavaScriptEnabled(true);
-    hiddenWebView.loadUrl("file:///android_asset/grid/base.html");
   }
 
   @Override
@@ -36,6 +30,22 @@ public class ComputeFragment extends Fragment {
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    hiddenWebView = new WebView(this.getActivity().getApplicationContext());
+    hiddenWebView.setId(WEB_VIEW_ID);
+    javascriptInterface = new JavascriptInterface(this.getActivity().getApplicationContext());
+    hiddenWebView.addJavascriptInterface(javascriptInterface, COMPUTE_INTERFACE);
+    hiddenWebView.getSettings().setJavaScriptEnabled(true);
+    hiddenWebView.setWebViewClient(new WebViewClient() {
+      @Override
+      public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        initiateJsCallback();
+      }
+    });
+    hiddenWebView.loadUrl("file:///android_asset/grid/base.html");
+  }
+
+  private void initiateJsCallback() {
     hiddenWebView.loadUrl("javascript:initiate();");
   }
 
@@ -48,7 +58,7 @@ public class ComputeFragment extends Fragment {
     }
 
     public void computedData(String jsonData) {
-      Toast.makeText(getActivity().getApplicationContext(), "Computation is Done", Toast.LENGTH_LONG);
+      ((GridActivity)getActivity()).showSuccessToast();
     }
 
   }

@@ -1,13 +1,11 @@
 package com.barefoot.grid;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 public class GridActivity extends FragmentActivity {
-  /**
-   * Called when the activity is first created.
-   */
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -16,4 +14,7 @@ public class GridActivity extends FragmentActivity {
     getSupportFragmentManager().beginTransaction().add(new ComputeFragment(), "computeFragment").commit();
   }
 
+  public void showSuccessToast() {
+    Toast.makeText(this, "Function was executed as you'd want", Toast.LENGTH_LONG).show();
+  }
 }
